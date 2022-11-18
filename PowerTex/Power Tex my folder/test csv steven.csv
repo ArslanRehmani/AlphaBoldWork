@@ -1,0 +1,4 @@
+﻿InternalId,entity,shipcarrier,shipmethod,location,orderType,otherrefnum,item,price level,rate,amount,department,class,taxcode,quantity,date,currency,memo,Line:Item,Line :Rate,Line : Date,Line: Qty
+5653,AlphaA,More,17762,Main Building,Sample,SAVE_ONLY,2-Color Screen Print Charge,price5,1,10,department5,class5,tax5,qty5,12/20/2021,3,test Trancaction 5,123,15,1,3
+5653,AlphaA,More,17762,Main Building,Sample,SAVE_ONLY,2-Color Screen Print Charge,price5,1,20,department5,class5,tax5,qty5,12/20/2021,3,test Trancaction 5,234,25,2,4
+5654,BoldB,More,17763,Main Building,Sample,SAVE_ONLY,2-Color Screen Print Charge,price6,1,50,department6,class6,tax6,qty6,12/21/2021,3,test Trancaction 6,456,35,3,5

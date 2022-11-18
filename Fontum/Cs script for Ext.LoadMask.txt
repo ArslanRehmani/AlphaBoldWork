@@ -1,0 +1,75 @@
+/***********************************************************************
+ *
+ * The following javascript code is created by FMT Consultants LLC,
+ * a NetSuite Partner. It is a SuiteFlex component containing custom code
+ * intended for NetSuite (www.netsuite.com) and use the SuiteScript API.
+ * The code is provided "as is": FMT Consultants LLC shall not be liable
+ * for any damages arising out the intended use or if the code is modified
+ * after delivery.
+ *
+ * Company:     FMT Consultants LLC, www.fmtconsultants.com
+ * Author:      smehmood@fmtconsultants.com
+ * File:        ITG_ItemLookupSuite_Cl.js
+ * Date:        2/7/2018
+ *
+ ***********************************************************************/
+ function addItem() {
+    var lineCount = nlapiGetLineItemCount('custpage_items');
+    var selectedLineIndex = 0;
+    var CUSTOM_LIST_ID = 'custpage_items';
+    
+    for (var i = 1; i <= lineCount; i++) {
+        if (nlapiGetLineItemValue(CUSTOM_LIST_ID, 'custpage_cb', i) === "T") {
+            selectedLineIndex = i;
+            break;
+        }
+    }
+
+    if (selectedLineIndex > 0) {
+
+        // Display a loading mask over the window
+        //var loadMask = new Ext.LoadMask(Ext.getBody(), 
+        //    {
+        //        msg: "Please wait while the selected item(s) are added.."
+        //    }
+        //);
+        //loadMask.show();
+
+        // Put all of this into a small timeout to allow the load mask to render
+        setTimeout(function () {
+
+            for (var i = 1, count = nlapiGetLineItemCount('custpage_items'); i <= count; i++) {
+
+                // Initialise suitelet line item values
+                var selected = nlapiGetLineItemValue('custpage_items', 'custpage_cb', i);
+                var selectedItem = nlapiGetLineItemValue('custpage_items', 'custpage_id', i);
+                //Added Next Line
+                var selectedQty = nlapiGetLineItemValue('custpage_items', 'custpage_qtyforsalesorder', i);
+    
+                // Only continue if the current line is selected and there is a valid item
+                if (!(selected == 'T' && selectedItem)) continue;
+    
+                // Only select a new line item when we're on the second part of the loop
+                if (i != 1) window.opener.nlapiSelectNewLineItem('item');
+                
+                // Add the line item
+                window.opener.nlapiSetCurrentLineItemValue('item', 'item', selectedItem, true, true);
+              //Added Next Line
+                window.opener.nlapiSetCurrentLineItemValue('item', 'quantity', selectedQty, true, true);
+                window.opener.nlapiCommitLineItem('item');
+
+            }
+
+            // Close the loading mask and the window
+            //loadMask.hide();
+            window.close();
+        }, 150);
+        
+    } else {
+        alert('Please select at least one Item to add.');
+    }
+}
+
+function pageInit() {
+    window.onbeforeunload = null;
+}

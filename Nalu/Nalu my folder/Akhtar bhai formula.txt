@@ -1,0 +1,1 @@
+case when {customform} != 'Nalu | Sales Order' then  '*** Please include CofC copies with shipments ***' end

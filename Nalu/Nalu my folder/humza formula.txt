@@ -1,0 +1,6 @@
+case when ({customform} = 'Nalu | Sales Order' AND {location.custrecord_nm_location_type} = 'Field Rep')
+then 'NOTE: “These products are cleared for US commercial use under 510(k)’s K183047, K183579, K190960, and K191435"'
+else case when ({customform} = 'Nalu | Non-Commercial Sales Order' AND {location.custrecord_nm_location_type} = 'Co-Man')
+then '*** Please include CofC copies with shipments' 
+else case when ({customform} = 'MTI | Transfers Order' AND {location.custrecord_nm_location_type} = 'Co-Man')
+then '*** Please include CofC copies with shipments' else '' end end end

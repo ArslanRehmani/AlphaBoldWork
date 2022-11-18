@@ -1,0 +1,62 @@
+function beforeSubmit() {
+    try{
+    var SO = nlapiGetNewRecord();
+    var id = SO.id;
+    nlapiLogExecution('DEBUG', 'id', id);
+    var obj = {
+            country  : 'US',//_unitedStates
+            isresidential : 'F',
+            attention     : 'Test123',
+            addressee  : 'Arslan Inc.',
+            addrphone  : '(123)123-1234',
+            addr1      : '2955 Campus Drive',
+            addr2    : 'Suite - 200',
+            city    : 'San Mateo',
+            state   : 'CA',
+            zip    : '94403'
+        };
+    // var SO = nlapiLoadRecord('salesorder', id);
+
+        // SO.setFieldValue('billcountry', 'US');
+        // SO.setFieldValue('billisresidential', 'F');
+        // SO.setFieldValue('billattention', 'EMP123');
+        // SO.setFieldValue('billaddressee', 'Shipping123');
+        // SO.setFieldValue('billaddrphone', '(123)456-78123');
+        // SO.setFieldValue('billaddr1', '2955 Campus Driv123');
+        // SO.setFieldValue('billaddr2', 'Suite - 10123');
+        // SO.setFieldValue('billcity', 'San Mate123');
+        // SO.setFieldValue('billstate', 'CA');
+        // SO.setFieldValue('billzip', '94403');
+
+
+        SO.setFieldValue('shipcountry', obj.country);
+        SO.setFieldValue('shipisresidential', obj.isresidential);
+        SO.setFieldValue('shipattention', obj.attention);
+        SO.setFieldValue('shipaddressee', obj.addressee);
+        SO.setFieldValue('shipaddrphone', obj.addrphone);
+        SO.setFieldValue('shipaddr1', obj.addr1);
+        SO.setFieldValue('shipaddr2', obj.addr2);
+        SO.setFieldValue('shipcity', obj.city);
+        SO.setFieldValue('shipstate', obj.state);
+        SO.setFieldValue('shipzip', obj.zip);
+
+        // SO.setFieldValue('shipcountry', 'US');
+        // SO.setFieldValue('shipisresidential', 'F');
+        // SO.setFieldValue('shipattention', 'Test123');
+        // SO.setFieldValue('shipaddressee', 'Shipping123');
+        // SO.setFieldValue('shipaddrphone', '(123)456-78123');
+        // SO.setFieldValue('shipaddr1', '2955 Campus Driv123');
+        // SO.setFieldValue('shipaddr2', 'Suite - 10123');
+        // SO.setFieldValue('shipcity', 'San Mate123');
+        // SO.setFieldValue('shipstate', 'CA');
+        // SO.setFieldValue('shipzip', '94403');
+
+        // var recid = nlapiSubmitRecord(SO);
+        // nlapiLogExecution('DEBUG', 'recid', recid); 
+        // submit sales order
+            // var recid = nlapiSubmitRecord(SO);
+            // nlapiLogExecution('DEBUG', 'recid', recid);   
+}catch(error){
+    nlapiLogExecution('DEBUG', 'error', error.message);
+}
+}

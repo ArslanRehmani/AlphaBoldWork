@@ -1,0 +1,67 @@
+/**
+ *@NApiVersion 2.0
+ *@NScriptType UserEventScript
+ */
+define(['N/record', 'N/log'], function (record, log) {
+
+    function beforeLoad(context) {
+        var title = 'beforeLoad()::';
+        try {
+            var objRecord = context.newRecord;
+            var currentRecID = objRecord.id;
+            log.debug('currentRecID', currentRecID);
+                var currentRecord = record.load({
+                    type: 'customrecord_wipfli_prd',
+                    id: currentRecID
+                });
+                var count = currentRecord.getLineCount({
+                    sublistId: 'recmachcustrecord_wipfli_prdtask_prdord'
+                });
+                log.debug({
+                    title: 'count',
+                    details: count
+                });
+                var array = [];
+                for (var i = 0; i < count; i++) {
+                    var date = currentRecord.getSublistValue({
+                        sublistId: 'recmachcustrecord_wipfli_prdtask_prdord',
+                        fieldId: 'custrecord_wipfli_prdtask_duedate',
+                        line: i
+                    });
+                    log.debug({
+                        title: 'date',
+                        details: date
+                    });
+                    array[i] = date;
+                }
+                log.debug({
+                    title: 'array',
+                    details: array
+                });
+                if (array.length != 0) {
+                    var maxDate = new Date(Math.max.apply(null, array));
+                    log.debug({
+                        title: 'maxDate',
+                        details: maxDate
+                    });
+                    currentRecord.setValue({
+                        fieldId: 'custrecord_ab_test_date',
+                        value: new Date(maxDate)
+                    });
+                    currentRecord.setValue({
+                        fieldId: 'custrecord_prd_scheduledrundate_first',
+                        value: new Date(maxDate)
+                    });
+                    currentRecord.save();
+                }
+        }
+        catch (e) {
+            log.debug(e+title, e.message);
+        }
+    }
+
+
+    return {
+        beforeLoad: beforeLoad
+    }
+});

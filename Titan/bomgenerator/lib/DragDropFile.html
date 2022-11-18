@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.css">
+
+    <title>Import BOM</title>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+    <style>
+        table {
+            text-align: center;
+        }
+
+        .box {
+            font-size: 1.25rem;
+            background-color: #c8dadf;
+            position: relative;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .box.is-dragover {
+            background-color: grey;
+        }
+
+        .box.has-advanced-upload {
+            outline: 2px dashed #92b0b3;
+            outline-offset: -10px;
+            -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+            transition: outline-offset .15s ease-in-out, background-color .15s linear;
+        }
+
+        .box.has-advanced-upload .box__icon {
+            width: 100%;
+            height: 80px;
+            fill: #92b0b3;
+            display: block;
+            margin-bottom: 40px;
+        }
+
+        .box__file {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .box__file + label {
+            max-width: 80%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .box__button {
+            font-weight: 700;
+            color: #e5edf1;
+            background-color: #39bfd3;
+            display: none;
+            padding: 8px 16px;
+            margin: 40px auto 0;
+        }
+
+        .box.has-advanced-upload .box__dragndrop {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+<script src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<p id="txt_error1" style="color: red;font-size: 22px;text-align: left;"></p>
+<div>
+    <div id="ddl_boomAssembly" class="box" style="outline: 2px dashed #92b0b3;
+    outline-offset: -10px;width: 49%;float: left;height: 388px;display: flex;justify-content: center;align-items: center;font-size: 20px;">
+        <select id="boomAssembly" style="float: left;width: 500px;height: 30px;">
+        </select>
+    </div>
+    <!--    <div class="box has-advanced-upload">-->
+    <div class="box has-advanced-upload" style="width: 50%;float: right;">
+        <div class="box__input">
+            <input class="box__file" type="file" id="file" accept=".csv" onchange="uploadFile();">
+            <label for="file">
+                <svg class="box__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43"
+                     viewBox="0 0 50 43">
+                    <path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path>
+                </svg>
+                <strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
+            <!--        <button type="button" class="box__button" onclick="uploadFile();return false;">Upload</button>-->
+            <br/><br/><br/>
+        </div>
+    </div>
+    <!--    </div>-->
+    <div id="data-grid">
+        <button id="btn_newRoe" style="display:none;float: right;margin: 10px;" class="btn btn-primary" type="button"
+                onclick="newRow();return false;">Add New Row
+        </button>
+        <p id="txt_error" style="color: red;font-size: 25px;text-align: left;"></p>
+        <div id="dvCSV" class="BOMItems"></div>
+        <button id="btn_import" style="display:none;" class="btn btn-primary" type="button"
+                onclick="importData();return false;">Import
+        </button>
+    </div>
+    <div id="loaderDiv"
+         style="display:none;position:fixed; z-index:1000;top:0;left:0;height:100%;width:100%;background: rgba( 255, 255, 255, .8 ) url('https://www.point-s.co.uk/application/themes/point-sv2/assets/img/ajax_loader_green_128.gif')50% 50%no-repeat;"></div>
+    <script>
+        var BOMItems = [];
+        var sourceSubsidiary = "[sourceSubsidiary]";
+        var boomAssembly = '[BoomAssembly]';
+        var sourceLocation = "[sourceLocation]";
+        var errorMessage = "[errorMessage]";
+        var configId = "[configId]";
+        var serverURl = "[URL]";//"https://tstdrv2084962.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2260&deploy=1"; //"[action]";
+        var loaderDiv = document.getElementById("loaderDiv");
+        var CSV_FILE_COLUMNS = [
+            "SKU",
+            "Parent",
+            "Type",
+            "Item Type",
+            "Description",
+            "Assembly Unit Type",
+            "Compnonents Item Source",
+            "Compnonents YIELD",
+            "Compnonents Qty"
+        ];
+
+        if (!!boomAssembly) {
+            boomAssembly = JSON.parse(boomAssembly);
+            var boomAssemblyDDL = jQuery('#boomAssembly');
+            boomAssemblyDDL.on('change', function () {
+                var assemblyItem = boomAssemblyDDL.val();
+                window.loadAssemblyChild(assemblyItem);
+            });
+            for (var i = 0; i < boomAssembly.length; i++) {
+                var opt = document.createElement('option');
+                // create text node to add to option element (opt)
+                opt.appendChild(document.createTextNode(boomAssembly[i].name));
+                // set value property of opt
+                opt.value = boomAssembly[i].id;
+                // add opt to end of select box (sel)
+                boomAssemblyDDL[0].appendChild(opt);
+            }
+        }
+
+        //if(!!sourceSubsidiary){
+        jQuery("#ns_navigation").remove();
+        jQuery('#ns_header').remove();
+        jQuery('#div__header').remove();
+
+        //}
+
+        if (!!errorMessage) {
+            jQuery("#txt_error1").text(errorMessage);
+        }
+        //if (!errorMessage) {
+        jQuery('.has-advanced-upload').on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        })
+            // .on('dragover dragenter', function () {
+            //     //jQuery('.has-advanced-upload').addClass('is-dragover');
+            // })
+            // .on('dragleave dragend drop', function () {
+            //     //jQuery('.has-advanced-upload').removeClass('is-dragover');
+            // })
+            .on('drop', function (e) {
+                droppedFiles = e.originalEvent.dataTransfer.files;
+                uploadFile(droppedFiles);
+            });
+        // } else {
+        //alert(errorMessage);
+        //}
+
+        function newRow() {
+            var gridTable = document.getElementById('table');
+            if (!!gridTable) {
+                var items = [{
+                    "SKU": "",
+                    "Parent": "",
+                    "Type": "InvtPart",
+                    "Item Type": "inventoryitem",
+                    "Description": "",
+                    "Assembly Unit Type": "Area",
+                    "Compnonents Item Source": "Stock",
+                    "Compnonents YIELD": "",
+                    "Compnonents Qty": "1",
+                    "InternalId": "0"
+                    //"Status": ""
+                }];
+                createRowsAndColumns(items, [], gridTable, true);
+                if (!!BOMItems && BOMItems.length > 0) {
+                    BOMItems.push(items[0]);
+                }
+            }
+        }
+
+        window.loadAssemblyChild = function (assemblyItemId) {
+            window.update = true
+            loaderDiv.style.display = "block";
+            jQuery.ajax({
+                type: "POST",
+                url: serverURl + "&getAssemblyData=true&id=" + assemblyItemId,
+                data: null,
+                success: function (returnList) {
+                    jQuery('#btn_newRoe').show();
+                    jQuery('#btn_import').text('Update')
+                    jQuery('#ddl_boomAssembly').hide();
+                    jQuery('#txt_type_msg').hide();
+                    var temp = JSON.parse(returnList);
+                    window.unitList = temp.unitList;
+                    BOMItems = temp.results;
+                    renderGrid(BOMItems, null);
+                    document.getElementById("btn_import").style.display = "block";
+                    jQuery('#data-grid').show();
+                    jQuery('.box').hide();
+                    loaderDiv.style.display = "none";
+                    //window.update = false;
+                }
+            });
+        }
+
+        function updateQueryStringParameter(uri, key, value) {
+            if (!!value) {
+                var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+                var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+                if (uri.match(re)) {
+                    return uri.replace(re, '$1' + key + "=" + value + '$2');
+                } else {
+                    return uri + separator + key + "=" + value;
+                }
+            } else {
+                return uri;
+            }
+        }
+
+        function uploadFile(file) {
+            //if (!errorMessage) {
+            loaderDiv.style.display = "block";
+            var skuArray = [];
+            var columns = [];
+            var fileUpload = document.getElementById("file");
+            if (!file) {
+                file = fileUpload.files[0];
+            } else {
+                file = file[0];
+            }
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv)$/;
+            if (regex.test(file.name.toLowerCase())) {
+                if (typeof (FileReader) != "undefined") {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        BOMItems = csvJSON(e.target.result);
+                        for (var i = 0; i < BOMItems.length; i++) {
+                            if (!!BOMItems[i].SKU) {
+                                skuArray.push(BOMItems[i].SKU);
+                            }
+                        }
+                        if (!!skuArray && skuArray.length > 0) {
+                            var keys = Object.keys(BOMItems[0]).join(",");
+                            jQuery.ajax({
+                                type: "POST",
+                                url: updateQueryStringParameter(serverURl + "&parseCSV=true", 'configId', configId),
+                                data: "ids=" + skuArray.join(",") + "&keys=" + keys,
+                                success: function (dataObj) {
+                                    console.log(data);
+                                    jQuery('#btn_newRoe').show();
+                                    jQuery('#ddl_boomAssembly').hide();
+                                    jQuery('#txt_type_msg').hide();
+                                    var temp = JSON.parse(dataObj);
+                                    window.unitList = temp.unitList;
+                                    var data = temp.result;
+                                    var customFields = temp.customFields;
+                                    if (!!data && data.length > 0) {
+                                        for (var i = 0; i < data.length; i++) {
+                                            BOMItems.filter(function (_item) {
+                                                if (_item.SKU == data[i].sku) {
+                                                    _item.InternalId = data[i].id;
+                                                    _item.Status = "Exist in Netsuite";
+                                                }
+                                            });
+                                        }
+                                    }
+                                    BOMItems.filter(function (_item) {
+                                        if (!_item.InternalId) {
+                                            _item.InternalId = 0;
+                                            _item.Status = "New";
+                                        }
+                                    });
+                                    renderGrid(BOMItems, customFields);
+                                    document.getElementById("btn_import").style.display = "block";
+                                    jQuery('#data-grid').show();
+                                    jQuery('.box').hide();
+                                    loaderDiv.style.display = "none";
+                                }
+                            });
+                        }
+                    };
+                    reader.readAsText(file);
+                } else {
+                    loaderDiv.style.display = "none";
+                    alert("This browser does not support HTML5.");
+                }
+            } else {
+                loaderDiv.style.display = "none";
+                alert("Please upload a valid CSV file.");
+            }
+            //}else{
+            // alert(errorMessage);
+            // }
+            return false;
+        }
+
+        function importData() {
+            if (!!BOMItems && BOMItems.length > 0) {
+                loaderDiv.style.display = "block";
+                setTimeout(function () {
+                    for (var m = 0; m < BOMItems.length; m++) {
+                        var _item = BOMItems[m];
+                        if (!document.getElementById('chkSelect_' + m.toString() + "_label") || !!document.getElementById('chkSelect_' + m.toString() + "_label").checked) {
+                            for (var n = 0; n < CSV_FILE_COLUMNS.length; n++) {
+                                if (!!document.getElementById(CSV_FILE_COLUMNS[n].replace(/ /g, "-") + "_" + m.toString() + "_label")) {
+                                    _item[CSV_FILE_COLUMNS[n]] = document.getElementById(CSV_FILE_COLUMNS[n].replace(/ /g, "-") + "_" + m.toString() + "_label").value;
+                                }
+                            }
+                        }else if (!!document.getElementById('chkSelect_' + m.toString() + "_label") && !document.getElementById('chkSelect_' + m.toString() + "_label").checked) {
+                            BOMItems[m].needToBeDelete = true;
+                        }
+                    }
+                    BOMItems = BOMItems.filter(function (item) {
+                        return !item.needToBeDelete;
+                    });
+                    var parentList = BOMItems.filter(function (item) {
+                        return !item.Parent;
+                    });
+                    for (var i = 0; i < parentList.length; i++) {
+                        parentList[i] = getChilds(parentList[i]);
+                        parentList[i].isParent = true;
+                    }
+                    var newItems = parentList.filter(function (p) {
+                        //if (p.InternalId == 0) {
+                        return true;
+                        //}
+                    });
+                    if (newItems.length > 0) {
+                        jQuery.ajax({
+                            type: "POST",
+                            url: updateQueryStringParameter(serverURl + "&generatorBOM=true&sourceSubsidiary=" + sourceSubsidiary + "&sourceLocation=" + sourceLocation, 'configId', configId),
+                            data: "data=" + JSON.stringify(parentList).replace(/&/g, "BOMemperson").replace(/#/g, "BOMhash"),
+                            success: function (returnList) {
+                                var temp = JSON.parse(returnList);
+                                var data = temp.items;
+                                var error = temp.error;
+                                var message = temp.message;
+                                if (!!error) {
+                                    //alert(error);
+                                    jQuery("#txt_error")[0].innerHTML = "Error :" + message;
+                                }
+                                jQuery("#BOMGrid").remove();
+                                for (var i = 0; i < BOMItems.length; i++) {
+                                    var item = BOMItems[i];
+                                    var temp = getItem(item.SKU, data);
+                                    if (!!temp) {
+                                        if (!error) {
+                                            error = temp.error;
+                                            message = temp.message;
+                                        }
+                                        item.Message = temp.message;
+                                        item.InternalId = temp.InternalId;
+                                        delete item.Status;
+                                        delete item.compnonets;
+                                        delete item.isParent;
+                                        BOMItems[i] = item;
+                                    }
+                                }
+                                if(!window.update) {
+                                    renderGrid(BOMItems);
+                                    for (var i = 0; i < data.length; i++) {
+                                        var item = data[i];
+                                        item.assemblyitemId = item.InternalId;
+                                    }
+                                    loaderDiv.style.display = "none";
+                                }
+                                if (!!window.opener && !!window.opener.createBom && !error) {
+                                    window.successfulyAddedBOM = function () {
+                                        alert("BOM is successfully added in Sales Order");
+                                        // jQuery('#data-grid').hide();
+                                        // jQuery('.box').show();
+                                        //document.getElementById("btn_import").style.display = "none";
+                                        window.location.reload();
+                                        BOMItems = [];
+                                    };
+                                    window.opener.createBom(JSON.stringify(data));
+                                } else if (!error) {
+                                    alert("BOM is successfully created");
+                                    window.location.reload();
+                                } else {
+                                    alert(message);
+                                    loaderDiv.style.display = "none";
+                                }
+                            }
+                        });
+                    } else {
+                        for (var i = 0; i < parentList.length; i++) {
+                            var item = parentList[i];
+                            item.assemblyitemId = item.InternalId;
+                        }
+                        loaderDiv.style.display = "none";
+                        if (!!window.opener && !!window.opener.createBom) {
+                            window.successfulyAddedBOM = function () {
+                                alert("BOM is successfully added in Sales Order");
+                                // jQuery('#data-grid').hide();
+                                // jQuery('.box').show();
+                                //document.getElementById("btn_import").style.display = "none";
+                                window.location.reload();
+                                BOMItems = [];
+                            };
+                            window.opener.createBom(JSON.stringify(parentList));
+                        } else {
+                            alert("BOM is successfully created");
+                            window.location.reload();
+                        }
+                    }
+                }, 500);
+            }
+        }
+
+        function getItem(sku, list) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].SKU == sku) {
+                    return list[i];
+                } else {
+                    var temp = getItem(sku, list[i].compnonets)
+                    if (!!temp) {
+                        return temp
+                    }
+                }
+            }
+        }
+
+        function getChilds(parent) {
+            if (!!parent) {
+                parent.compnonets = BOMItems.filter(function (item) {
+                    return item.Parent === parent.SKU;
+                });
+                for (var i = 0; i < parent.compnonets.length; i++) {
+                    parent.compnonets[i] = getChilds(parent.compnonets[i]);
+                }
+                return parent;
+            } else {
+                return []
+            }
+        }
+
+        function createRowsAndColumns(items, customFields, table, newRow) {
+            var cells = Object.keys(items[0]);
+            var header = table.createTHead();
+            //header.classList.add("thead-dark");
+            var row = header.insertRow(-1);
+            var tbody = null;
+            var indexRow = 0;
+            if (!newRow) {
+                for (var j = 0; j < cells.length; j++) {
+                    if (j == 0 && window.update) {
+                        var cell = row.insertCell(-1);
+                        cell.innerHTML = "Select";
+                    }
+                    var cell = row.insertCell(-1);
+                    //cell.classList.add("col");
+                    var result = customFields.filter(function (c) {
+                        return c.fieldId === cells[j].toLowerCase().trim().replace(/ /g, '_');
+                    });
+                    if (!!result && result.length > 0 && result[0].status == false) {
+                        cell.innerHTML = "<b>" + cells[j] + "</b>";
+                        cell.style.background = "yellow";
+                    } else if (cells[j] === "InternalId") {
+                        cell.innerHTML = "<b>Id</b>";
+                    } else {
+                        cell.innerHTML = "<b>" + cells[j] + "</b>";
+                    }
+                }
+                var tbody = table.createTBody();
+            }else {
+                tbody = table.tBodies[0];
+                indexRow = table.tBodies[0].rows.length;
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                if (cells.length > 1 || !!newRow) {
+                    row = tbody.insertRow(-1);
+                    if (items[i].InternalId > 0 && !window.update) {
+                        row.style.background = "#90EE90";
+                    }
+                    var isParent = false;
+                    for (var j = 0; j < cells.length; j++) {
+                        if (j == 0 && window.update) {
+                            var cell = row.insertCell(-1);
+                            cell.id = "chkSelect_" + indexRow.toString();
+                            cell.innerHTML = "<input type='checkbox' " + (indexRow === 0 && !newRow ? "disabled" : "") + " id='" + cell.id + "_label" + "' checked />";
+                        }
+                        var cell = row.insertCell(-1);
+                        cell.id = cells[j].replace(/ /g, "-") + "_" + indexRow.toString();
+                        if (cell.id === CSV_FILE_COLUMNS[2].replace(/ /g, "-") + "_" + indexRow.toString() || cell.id === CSV_FILE_COLUMNS[3].replace(/ /g, "-") + "_" + indexRow.toString()
+                            || cell.id == "InternalId" + "_" + indexRow.toString() || cell.id == "Status" + "_" + indexRow.toString()) {
+                            cell.innerHTML = items[i][cells[j]];
+                        } else if (cell.id === CSV_FILE_COLUMNS[0].replace(/ /g, "-") + "_" + indexRow.toString() && !newRow) {
+                            cell.innerHTML = items[i][cells[j]];
+                        } else if (cell.id === CSV_FILE_COLUMNS[5].replace(/ /g, "-") + "_" + indexRow.toString()) {
+                            if (!!window.unitList) {
+                                var error = true;
+                                var control = "<select id='" + cell.id + "_label" + "'>";
+                                for (var u = 0; u < window.unitList.length; u++) {
+                                    if ((items[i][cells[j]] == window.unitList[u].name || items[i][cells[j]] == window.unitList[u].id)) {
+                                        error = false;
+                                    }
+                                    control += "<option " + ((items[i][cells[j]] == window.unitList[u].name || items[i][cells[j]] == window.unitList[u].id) ? "selected" : "") + " value='" + window.unitList[u].id + "'>" + window.unitList[u].name + "</option>";
+                                }
+                                control += "</select>";
+                                if (error && !newRow) {
+                                    cell.style.background = "red";
+                                }
+                                cell.innerHTML = control;
+                            } else {
+                                cell.innerHTML = items[i][cells[j]];
+                            }
+                        } else if (cell.id === CSV_FILE_COLUMNS[6].replace(/ /g, "-") + "_" + indexRow.toString()) {
+                            if (isParent == false) {
+                                var error = false;
+                                if (items[i][cells[j]] != "Stock" && items[i][cells[j]] != "Purchase Order") {
+                                    error = true;
+                                }
+                                if (error && !newRow) {
+                                    cell.style.background = "red";
+                                }
+                                cell.innerHTML = "<select id='" + cell.id + "_label" + "'><option " + (items[i][cells[j]] == "Stock" ? "selected" : "") + " value='Stock'>Stock</option><option " + (items[i][cells[j]] == "Purchase Order" ? "selected" : "") + " value='Purchase Order'>Purchase Order</option></select>";
+                            }
+                        } else if (cell.id === CSV_FILE_COLUMNS[7].replace(/ /g, "-") + "_" + indexRow.toString()) {
+                            if (isParent == false) {
+                                cell.innerHTML = cell.innerHTML = "<input type='text' id='" + cell.id + "_label" + "' value='" + items[i][cells[j]] + "' />";
+                            }
+                        } else if (cell.id === CSV_FILE_COLUMNS[8].replace(/ /g, "-") + "_" + indexRow.toString()) {
+                            if (isParent == false) {
+                                if (Number.isInteger(parseInt(items[i][cells[j]]))) {
+                                    cell.innerHTML = cell.innerHTML = "<input type='text' id='" + cell.id + "_label" + "' value='" + items[i][cells[j]] + "' />";
+                                } else {
+                                    cell.style.background = "red";
+                                    cell.innerHTML = cell.innerHTML = "<input type='text' id='" + cell.id + "_label" + "' value='1' />";
+                                }
+                            }
+                        } else if (cell.id === CSV_FILE_COLUMNS[1].replace(/ /g, "-") + "_" + indexRow.toString() && !newRow) {
+                            cell.innerHTML = items[i][cells[j]];
+                            if (!cell.innerHTML && !newRow) {
+                                isParent = true;
+                            }
+                        } else {
+                            if(cell.id === CSV_FILE_COLUMNS[4].replace(/ /g, "-") + "_" + indexRow.toString() ||
+                                cell.id === CSV_FILE_COLUMNS[0].replace(/ /g, "-") + "_" + indexRow.toString() ||
+                                cell.id === CSV_FILE_COLUMNS[1].replace(/ /g, "-") + "_" + indexRow.toString()) {
+                                cell.innerHTML = "<input type='text' id='" + cell.id + "_label" + "' value='" + items[i][cells[j]] + "' />";
+                            }else{
+                                cell.innerHTML = "<input type='text' disabled id='" + cell.id + "_label" + "' value='" + items[i][cells[j]] + "' />";
+                            }
+                        }
+
+                    }
+                }
+                indexRow++;
+            }
+        }
+
+        function renderGrid(items, customFields) {
+            var table = document.createElement("table");
+            table.id = "table";
+            customFields = customFields || [];
+            table.classList.add("table");
+            table.classList.add("table-bordered");
+            table.classList.add("table-hover");
+            table.classList.add("table-sm");
+            table.classList.add("table-borderless");
+            createRowsAndColumns(items, customFields, table);
+            var dvCSV = document.getElementById("dvCSV");
+            dvCSV.innerHTML = "";
+            dvCSV.appendChild(table);
+        }
+
+        function csvJSON(csv) {
+            var lines = csv.split("\n");
+            var result = [];
+            var headers = lines[0].split(",");
+            for (var i = 1; i < lines.length; i++) {
+                var obj = {};
+                var currentline = lines[i].split(",");
+                for (var j = 0; j < headers.length; j++) {
+                    obj[headers[j].replace("\r", "")] = !!currentline[j] ? currentline[j].replace("\r", "") : ""
+                }
+                if (!!obj.SKU) {
+                    result.push(obj);
+                }
+            }
+            return result; //JSON
+        }
+
+    </script>
+</body>
+</html>
