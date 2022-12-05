@@ -16,8 +16,8 @@
  * File:        AB_NL_UE_SetInventoryNumberValues.js
  * Date:        2/10/2020
  ***********************************************************************/
-define(['N/record', 'N/search', 'N/runtime', 'N/https', 'N/url', '../utils/AB_NL_UTL_SetInventoryNumberValues'],
-    function (record, search, runtime, https, url, mUtil) {
+define(['N/record', 'N/search', 'N/runtime', 'N/https', 'N/url', '../utils/AB_NL_UTL_SetInventoryNumberValues','N/log'],
+    function (record, search, runtime, https, url, mUtil,log) {
         function afterSubmit(context) {
             if (context.type == context.UserEventType.CREATE || context.type == context.UserEventType.EDIT) {
                 var currentRecordId = context.newRecord.id, currentRecordType = context.newRecord.type;

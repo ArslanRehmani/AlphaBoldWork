@@ -24,26 +24,27 @@ define(['N/log','N/record','N/search','../dao/AB_CLS_SFTPConnection.js','../Comm
 
     function getInputData() {
         var title = 'getInputData()::';
-        var linesArr = [];
          try{
-            var fileId = CLS_SFTPConnection.downloadFile();
-            if(fileId){
-                linesArr = LIB_Common.getCSVLines(fileId);
-            }
+            var fileNameArray = CLS_SFTPConnection.downloadFile();
             }catch(error){
                 log.error(title+error.name,error.message);
-        } 
-        return linesArr || [];
+        }
+        return fileNameArray || [];
     }
 
     function map(context) {
         var title = 'map()::';
         try{
-            log.debug(title+'context',context);
             var lineData = JSON.parse(context.value);
-            log.debug(title+'lineData',lineData);
-            var shipingRecId = CLS_shipmentStatus.create(lineData);
-            log.debug(title+'shipingRecId',shipingRecId);
+            if(!!lineData){
+                var fileName = lineData['name'];
+                var fileId = CLS_SFTPConnection.downloadFileWithName(fileName);
+                if(fileId){
+                    var linesArr = LIB_Common.getCSVLines(fileId);
+                    var shipingRecId = CLS_shipmentStatus.create(linesArr);
+                    log.debug(title+'shipingRecId',shipingRecId);
+                }
+            }
            }catch(error){
                log.error(title+error.name,error.message);
        } 
