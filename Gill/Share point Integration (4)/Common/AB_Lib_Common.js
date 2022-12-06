@@ -41,7 +41,7 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
              * @returns null //Add Tab in recpective Record
              * 
             */
-            addTab: function (context, RecID, RecType, files,companyID,token) {
+            addTab: function (context, RecID, RecType, files,companyID,token,suiteletID) {
                 var object = context.newRecord;
                 var form = context.form;
                 var title = 'Functions AddTab(::)';
@@ -52,33 +52,30 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
                         id: this.sharePointTab.id,
                         label: this.sharePointTab.lable
                     });
-                    // var recordType = form.addField({
-                    //     id: this.sharePointTab.addField.recType.id,
-                    //     type: serverWidget.FieldType.LONGTEXT,
-                    //     label: this.sharePointTab.addField.recType.lable,
-                    //     container: this.sharePointTab.container.id
+                    // var fieldgroup = form.addFieldGroup({
+                    //     id : 'custgrp_spintegration',
+                    //     label : 'SP Integration'
                     // });
-                    // object.setValue({
-                    //     fieldId: this.sharePointTab.addField.recType.id,
-                    //     value: rectype
+                    // var agreeList = form.addSublist({
+                    //     id: 'custpage_echosign_agree_list',
+                    //     type: serverWidget.SublistType.STATICLIST,
+                    //     label: 'Upload File',
+                    //     tab: this.sharePointTab.id
                     // });
-                    // var recordID = form.addField({
-                    //     id: this.sharePointTab.addField.recID.id,
-                    //     type: serverWidget.FieldType.LONGTEXT,
-                    //     label: this.sharePointTab.addField.recID.lable,
-                    //     container: this.sharePointTab.container.id
-                    // });
-                    // object.setValue({
-                    //     fieldId: this.sharePointTab.addField.recID.id,
-                    //     value: recid
-                    // });
+                    form.clientScriptFileId = '74728';
+                    // agreeList.addButton({ id: "custpage_send_button", label: "Click Here To Upload File", functionName: "uploadFile()" });
                     var HtmlField = form.addField({
                         id: 'custpage_html_field',
                         type: serverWidget.FieldType.INLINEHTML,
                         label: 'Test Field',
                         container: this.sharePointTab.container.id
                     });
-                    if (files && files.length > 0) {
+  
+
+
+
+
+                    if (files) {
                         var htmlData = '<table style="width: 100%;margin-top: 10px;border: 1px solid;"><tr><th style="border: 1px solid;font-weight: bold;font-weight: bold">File Name</th><th style="border: 1px solid;font-weight: bold;font-weight: bold">Relative URL</th></tr>';
 
                         for (var x = 0; x < files.length; x++) {
@@ -89,6 +86,41 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
                         form.updateDefaultValues({
                             custpage_html_field: htmlData
                         });
+                        if(!files.length){
+                            // var ordersGrp = form.addFieldGroup('custpage_upload_btn_grp', 'Upload');
+                            var HtmlFieldUploadBtn = form.addField({
+                                id: 'custpage_html_upload_btn',
+                                type: serverWidget.FieldType.INLINEHTML,
+                                label: 'Upload File',
+                                container: this.sharePointTab.container.id
+                            });
+                            HtmlFieldUploadBtn.updateLayoutType({
+                                layoutType: serverWidget.FieldLayoutType.OUTSIDEABOVE
+                            });
+                            // HtmlField.updateLayoutType({
+                            //     layoutType: serverWidget.FieldLayoutType.STARTROW
+                            // });
+
+                            // var htmlBtnData = '<br /> <br /><input type="button" onClick ="uploadSharepointFile();" value="Upload File" />';
+                            // htmlBtnData += '<SCRIPT language="JavaScript" type="text/javascript">';
+                            // htmlBtnData += '$( document ).ready(function() {';
+                            // htmlBtnData += ' console.log( "document loaded" ); alert("Loaded")';
+                            // htmlBtnData += '});';
+                            // htmlBtnData += 'var uploadSharepointFile = function(event){';
+                            // htmlBtnData += 'alert("working")';
+                            // htmlBtnData += 'location.reload()}';
+                            // htmlBtnData += '</SCRIPT>';
+                            var htmlBtnData = '<br /> <br /><input type="button" onClick="uploadSharepointFile();"  id= "spFileUpload" value="Upload File" style="cursor:pointer;width: 100px;height: 25px;" />';
+                            htmlBtnData += '<SCRIPT language="JavaScript" type="text/javascript">';
+                            htmlBtnData += "function bindEvent(element, type, handler) {if(element.addEventListener) {element.addEventListener(type, handler, false);} else {element.attachEvent('on'+type, handler);}} ";
+                            htmlBtnData += 'bindEvent(window, "load", function(){';
+                            htmlBtnData += 'window.uploadSharepointFile = function (event){ window.open("/app/site/hosting/scriptlet.nl?script='+suiteletID+'&deploy=1", "Upload File", "width=1200px,height=600px");}';
+                            htmlBtnData += '});';
+                            htmlBtnData += '</SCRIPT>';
+                            form.updateDefaultValues({
+                                custpage_html_upload_btn: htmlBtnData
+                            });
+                        }
                     } 
                     else {
                         var agreeList = form.addSublist({
@@ -97,9 +129,8 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
                             label: 'Create Folder',
                             tab: this.sharePointTab.id
                         });
-                        //74728
                         form.clientScriptFileId = '74728';
-                        agreeList.addButton({ id: "custpage_send_button", label: "Click Here To Create Folder", functionName: "createFolder(' " + RecType + "','"+ companyID +"' ,'"+ token +"','"+ RecID +"','"+ context +"','"+ files +"')" });
+                        agreeList.addButton({ id: "custpage_send_button", label: "Click Here To Create Folder", functionName: "createCustomerFolder('"+RecType+"','"+companyID+"' ,'"+token+"','"+RecID+"','"+context+"','"+files+"')" });
                     }
 
 

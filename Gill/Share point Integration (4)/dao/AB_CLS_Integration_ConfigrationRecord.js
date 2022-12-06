@@ -1,7 +1,8 @@
 /**
  * @NApiVersion 2.0
  */
-define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidget','../dao/AB_CLS_Error.js'],
+// eslint-disable-next-line no-undef
+define(['N/log', 'N/record', 'N/runtime', 'N/search','../dao/AB_CLS_Error.js'],
     /**
      * @param{log} log
      * @param{record} record
@@ -10,7 +11,7 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
      * @param{file} file
      * @param{serverWidget} serverWidget
      */
-    function (log, record, runtime, search, file, serverWidget,error) {
+    function (log, record, runtime, search,error) {
         return {
             internalID: {
                 reccordType: 'customrecord_ab_add_subtab_inti_confi'
@@ -24,7 +25,10 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
                 spRelam :'custrecord_sp_realm',
                 spSiteUrl : 'custrecord_sp_site_url',
                 selectRecords: 'custrecord_multiselectrec_field',
-                siteFolderUrl: 'custrecord_site_folder_url'
+                spSubSite: 'custrecord_sp_subsite',
+                spParentFolder: 'custrecord_sp_parent_folder',
+                uploadFolderID: 'custrecord_ab_upload_folder_id',
+                uploadSuiteletId: 'custrecord_ab_upload_suitelet'
             },
             inActivePreviousRecords: function () {
                 var title = 'inActivePreviousRecords(::)';
@@ -100,7 +104,10 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
                             search.createColumn({name: this.fields.spRelam}),
                             search.createColumn({name: this.fields.spSiteUrl}),
                             search.createColumn({name: this.fields.selectRecords}),
-                            search.createColumn({name: this.fields.siteFolderUrl}),
+                            search.createColumn({name: this.fields.spParentFolder}),
+                            search.createColumn({name: this.fields.uploadFolderID}),
+                            search.createColumn({name: this.fields.uploadSuiteletId}),
+                            search.createColumn({name: this.fields.spSubSite}),
                         ]
                     });
                     var resultset = configSearch.run().getRange({
@@ -116,7 +123,10 @@ define(['N/log', 'N/record', 'N/runtime', 'N/search', 'N/file', 'N/ui/serverWidg
                         configObj.spRelam = result.getValue({name: this.fields.spRelam});
                         configObj.spSiteUrl = result.getValue({name: this.fields.spSiteUrl});
                         configObj.selectRecords = result.getValue({name: this.fields.selectRecords});
-                        configObj.siteFolderUrl = result.getValue({name: this.fields.siteFolderUrl});
+                        configObj.spParentFolder = result.getValue({name: this.fields.spParentFolder});
+                        configObj.uploadFolderID = result.getValue({name: this.fields.uploadFolderID});
+                        configObj.uploadSuiteletId = result.getValue({name: this.fields.uploadSuiteletId});
+                        configObj.spSubSite = result.getValue({name: this.fields.spSubSite});
                     }
                     }catch(error){
                         log.error(title+error.name,error.message);

@@ -53,8 +53,8 @@ define(['N/log', '../Common/AB_Lib_Common.js', '../dao/AB_CLS_Error.js', '../dao
                         };
                     }
                 }
-                // log.debug(title+'token',token);
-                Common.addTab(context, recId, recType, files, companyID, token);
+                log.debug(title+'configObj.uploadSuiteletId',configObj.uploadSuiteletId);
+                Common.addTab(context, recId, recType, files, companyID, token,configObj.uploadSuiteletId);
             } catch (e) {
                 log.error(title + 'Exception ', e.message);
                 AB_CLS_error.createError(e.name, e.message, title);
