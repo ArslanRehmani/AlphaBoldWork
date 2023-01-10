@@ -34,7 +34,7 @@ define(['N/log', 'N/currentRecord', 'N/record', 'N/ui/dialog', 'N/search','N/htt
  //production
         //    var popUp = window.open('/app/site/hosting/scriptlet.nl?script=860&deploy=1&hostname=' + hostname+ '&recId='+rec.id+ '&scriptsRestriction='+scriptsRestriction, 'SFTP GUID', 'width=1200px,height=600px');
  //sandbox    
-           var popUp = window.open('/app/site/hosting/scriptlet.nl?script=1067&deploy=1&hostname=' + hostname+ '&recId='+rec.id+ '&scriptsRestriction='+scriptsRestriction, 'SFTP GUID', 'width=1200px,height=600px');
+           var popUp = window.open('/app/site/hosting/scriptlet.nl?script=1092&deploy=1&hostname=' + hostname+ '&recId='+rec.id+ '&scriptsRestriction='+scriptsRestriction, 'SFTP GUID', 'width=1200px,height=600px');
             var timer = setInterval(function() {   
                 if(popUp.closed) {  
                     clearInterval(timer);

@@ -57,8 +57,6 @@ define(['N/log','N/record','N/search'], function(log,record,search) {
                         fieldId: this.fields.shipmentAppointmentReasonCode,
                         value: Data['Status Reason']
                     });
-                    // var formateDate = this.formateDate(Data['Date']);
-                    // log.debug('formateDate',formateDate);
                     shipmentRec.setValue({
                         fieldId: this.fields.date,
                         value: String(Data['Date'])
@@ -67,7 +65,7 @@ define(['N/log','N/record','N/search'], function(log,record,search) {
                         fieldId: this.fields.time,
                         value: String(Data['Time'])
                     });
-                    var itemfulfillmentID = this.itemFulfillmentInternalID(Data['Carrier Pro #']);
+                    var itemfulfillmentID = this.itemFulfillmentInternalID(Data['Customer Order #']);
                     if(itemfulfillmentID != 0){
                         shipmentRec.setValue({
                             fieldId: this.fields.itemFulfillmentNo,
